@@ -128,24 +128,20 @@ public class TicketsAnalyzer {
                         )
                 ));
 
-        // Собираем список длительностей всех рейсов (в минутах)
-        List<Long> durations = filtered.stream()
-                .map(t -> t.getFlightDuration().toMinutes())
+        // Средняя и медианная цена
+        List<Integer> prices = filtered.stream()
+                .map(t -> t.price)
                 .sorted()
                 .toList();
 
-        // Среднее время полета
-        double avg = durations.stream().mapToLong(Long::longValue).average().orElse(0);
+        double avgPrice = prices.stream().mapToInt(Integer::intValue).average().orElse(0);
 
-        // Медианное время полета
-        double median;
-        int size = durations.size();
+        double medianPrice;
+        int size = prices.size();
         if (size % 2 == 0) {
-            // если четное количество — берем среднее двух центральных
-            median = (durations.get(size / 2 - 1) + durations.get(size / 2)) / 2.0;
+            medianPrice = (prices.get(size / 2 - 1) + prices.get(size / 2)) / 2.0;
         } else {
-            // если нечетное — берем центральное значение
-            median = durations.get(size / 2);
+            medianPrice = prices.get(size / 2);
         }
 
         // Выводим результаты анализа
@@ -153,8 +149,8 @@ public class TicketsAnalyzer {
         minByCarrier.forEach((carrier, d) ->
                 System.out.println(carrier + ": " + d.toHoursPart() + "ч " + d.toMinutesPart() + "м"));
 
-        System.out.println("\nСреднее время полета: " + (long) avg + " минут");
-        System.out.println("Медианное время полета: " + (long) median + " минут");
-        System.out.println("Разница (среднее - медиана): " + ((long) avg - (long) median) + " минут");
+        //System.out.println("\nСредняя цена: " + (long) avgPrice + " руб.");
+        //System.out.println("Медианная цена: " + (long) medianPrice + " руб.");
+        System.out.println("Разница средней и медианной цен: " + ((long) avgPrice - (long) medianPrice) + " руб.");
     }
 }
